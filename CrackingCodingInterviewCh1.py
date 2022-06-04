@@ -117,6 +117,95 @@ def checkPermutationIsPalindrome(string):
 
     return True  
         
+# 1.5 - One Away: 
+# There are three types of edits that can be performed on strings: Insert, remove, or replace (a character)
+# Given two strings, write a function to check if they are one edit (or zero edits) away. 
+
+def oneEditAway(first, second): 
+    #Check the length of the two strings
+    if (len(first) - len(second) > 1): 
+        return False
+    
+    #Get the shorter and longer strings
+    s1 = first if len(first) < len(second) else second
+    s2 = second if len(first) < len(second) else first
+
+    #Get the indexes to begin traversing through strings, and have boolean to check if difference has been found
+    index1 = 0
+    index2 = 0
+    foundDifference = False 
+
+    while (index2 < len(second) and index1 < len(first)): 
+        if first[index1] != second[index2]: 
+            #Check if this is the first difference found
+            if foundDifference: 
+                return False
+            else: 
+                foundDifference = True
+        
+            #This if statement is used if there is a replacement char
+            if (len(s1) == len(s2)): 
+                index1 += 1
+        else:
+            #This executes when index1 == index2 
+            index1 += 1
+        
+        #Always move pointer of longer string
+        index2 += 1
+    
+    return True
+
+
+'''
+def checkOneAway(givenString, desiredString):
+
+    #Use a dictionary to store the contents of original string
+    charString = dict() 
+
+    for char in givenString: 
+        if char in charString: 
+            charString[char] += 1
+        else: 
+            charString[char] = 1
+    
+    #Check characters of desired string in compared to dictionary
+    oneEdit = False
+
+    for char2 in desiredString: 
+        if char2 not in charString:
+            if not oneEdit: 
+                oneEdit = True
+            else: 
+                return False 
+        else: 
+            charString[char2] -= 1
+            if charString[char2] == 0: 
+                del charString[char2]
+
+    
+    return True
+'''
+
+# 1.6 - Implement Compression
+# Implement a method to perform basic string compression using counts of repeated characters. 
+# If compressed string would not become any smaller than original string, method should return original string
+# Assume string has only upper and lowercase letters
+
+def compressString(string): 
+    #Establish count mechanism, and create compressed string variable
+    count = 0
+    compressedString = "" 
+    
+    #Traverse through the string, starting at beginning
+    for i in range(len(string)): 
+        count += 1
+
+        if (string[i] != string[i+1] or i + 1 > len(string)):
+            compressedString += "" + str(string[i]) + str(count)
+            count = 0
+    
+    #Check if the compressed string is smaller than the original string, and return so if true
+    return compressedString if (compressedString) < string else string
 
 def main(): 
     print(checkPermutationIsPalindrome("tact coa"))
