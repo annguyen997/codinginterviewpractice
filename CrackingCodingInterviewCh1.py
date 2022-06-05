@@ -318,14 +318,28 @@ def nullifyColumn(matrix, column):
         matrix[i][column] = 0
 
 # 1.9 - String Rotation
-# Assume method isSubstring which checks if one word is substring of another. 
+# Assume method isSubstring, which checks if one word is substring of another. 
 # Given two strings s1, s2, write code to check if s2 is a rotation of s1 using only one call to isSubstring
 
-def isSubstring(s1, s2): 
-    pass 
+def isRotation(s1, s2):
+    if (len(s2) == len(s1) and len(s1) > 0): 
+        # Concantenate s1 twice
+        s1s1 = s1 + s1
+        
+        # Get the first character of s2
+        chars2 = s2[0]
 
+        index = 0
+        while index < len(s1s1):
+            if chars2 == s1s1[index]:
+                if s2[0:len(s2)] == s1s1[index:index+len(s2)]:
+                    return True
+            index += 1
+        
+    return False
+        
 def main(): 
-    print(checkPermutationIsPalindrome("tact coa"))
+    print(isRotation("waterbottle", "erbottlewat"))
 
 main() 
 
