@@ -207,6 +207,123 @@ def compressString(string):
     #Check if the compressed string is smaller than the original string, and return so if true
     return compressedString if (compressedString) < string else string
 
+# 1.7 - Rotate Matrix
+# Write a method to rotate the image by 90 degrees. Can you do this in place? 
+# A given image is represented by an NxN matrix, which each pixel is 4 bytes
+
+def rotate90matrix(matrix):
+
+    #If matrix is empty or non-matching size of NxN, return False
+    if (len(matrix) == 0) or (len(matrix) != len(matrix[0])): 
+        return False 
+
+    #Calculate the length of matrix for layering
+    length = len(matrix)
+
+    #Do this in layers, starting with outermost layer, in a circular rotation
+    for layer in range(length/2):  #Swapping by 90 degrees mean length / 2 
+        first = layer 
+        last = length - 1 - layer
+
+        for i in range(first, last): 
+            #Offset is used to calculate bytes that have already been completed
+            offset = i - first
+
+            #Get the top as the temp
+            top = matrix[first][i]
+            #Swap top with left
+            matrix[first][i] = matrix[last-offset][first]
+            #Swap left with bottom
+            matrix[last-offset][first] = matrix[last][last-offset]
+            #Swap bottom with right
+            matrix[last][last-offset] = matrix[i][last]
+            #Swap right with top 
+            matrix[i][last] = top
+
+# 1.8 - Zero Matrix
+# Write an algorithm such if an element in an MxN matrix is 0, its entire row and column are set to zero. 
+def rotate90matrix(matrix):
+    #Create a list variable to hold locations of zeros
+    zeros = []
+
+    #Traverse through the matrix
+    colNum = len(matrix)
+    rowNum = len(matrix[0])
+
+    for i in range(rowNum): 
+        for j in range(colNum): 
+            if matrix[i][j] == 0: 
+                zeros.append((i, j))
+    
+    #Edit all rows and columns of i, j to zeros
+    while len(zeros) > 0: 
+        i, j = zeros.pop() 
+
+        #Turn all values of row i to zeros 
+        for k in range(colNum): 
+            matrix[i][k] = 0
+        
+        #Turn all values of column j to zeros
+        for k in range(rowNum):
+            matrix[k][j] = 0
+    
+    return matrix
+
+'''Alternative Scenario'''
+def setZeros(matrix): 
+    rowHasZero = False
+    colHasZero = False 
+
+    #Check if the first row has a zero 
+    for j in range(len(matrix[0])):
+        if (matrix[0][j] == 0): 
+            rowHasZero = True
+            break 
+    
+    #Check if the first column has a zero
+    for i in range(len(matrix)): 
+        if (matrix[i][0] == 0): 
+            colHasZero = False
+            break 
+
+    #Check for zeros in the rest of array
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])): 
+            if (matrix[i][j] == 0): 
+                matrix[i][0] = 0 
+                matrix[0][j] = 0
+    
+    #Nullify rows based on first column
+    for i in range(len(matrix)): 
+        if matrix[i][0] == 0: 
+            nullifyRow(matrix, i)
+    
+    #Nullify columns based on first row
+    for j in range(len(matrix[0])): 
+        if matrix[0][j] == 0: 
+            nullifyColumn(matrix, j)
+
+    #Nullify first row and/or column
+    if (rowHasZero): 
+        nullifyRow(matrix, 0)
+    if (colHasZero): 
+        nullifyColumn(matrix, 0)
+
+def nullifyRow(matrix, row): 
+    for j in range(len(matrix[0])): 
+        matrix[row][j] = 0
+
+def nullifyColumn(matrix, column): 
+    for i in range(len(matrix)): 
+        matrix[i][column] = 0
+
+# 1.9 - String Rotation
+# Assume method isSubstring which checks if one word is substring of another. 
+# Given two strings s1, s2, write code to check if s2 is a rotation of s1 using only one call to isSubstring
+
+def isSubstring(s1, s2): 
+    pass 
+
 def main(): 
     print(checkPermutationIsPalindrome("tact coa"))
 
