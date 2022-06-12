@@ -276,7 +276,6 @@ def checkLinkedListPalindromeStack(head):
     return True
     
 
-
 # 2.7 - Intersecton
 # Given two (singly) linked list, determine if the two lists intersect. 
 # Return the intersecting node. 
@@ -300,7 +299,7 @@ def findIntersection(head1, head2):
 
     #Calculate which is the longer one, and then assign head accordingly
     longer = head1 if length1 < length2 else head2
-    shorter = head2 if length1 < length2 else head1
+    shorter = head2 if length1 < length2 else head1 #Is this statement make sense? 
 
     #Move the longer one ahead first to match shorter
     difference = abs(length2 - length1)
@@ -333,10 +332,37 @@ def moveKthnode(node, diff):
     
     return node
     
+# 2.8 - Loop Detection
+# Given a circular linked list, implement an algorithm that returns the node at the beginning of the loop.
 
+def loopLinkedList(head): 
+    # Use two pointers to check if there is a loop 
+    slowPointer = head
+    fastPointer = head
 
+    while (fastPointer != None) and (fastPointer.next != None): 
+        slowPointer = slowPointer.next
+        fastPointer = fastPointer.next.next 
 
+        #Collision found
+        if (slowPointer == fastPointer): 
+            break 
+    
+    # If there is no cycle in the linked list, return None
+    if (fastPointer == None) or (fastPointer.next == None): 
+        return None 
 
+    # As upon entering the loop, the slow pointer has moved k nodes as the fast pointers has moved 2k nodes. 
+    # This means by collision point, the fast pointer would be k nodes away from start of loop again (as 2k - k is k)
+    # Move the slow pointer back to head, and move by k steps. The two pointers will meet at beginning. 
+    slowPointer = head
+    while (slowPointer != fastPointer):
+        slowPointer = slowPointer.next
+        fastPointer = fastPointer.next
+
+    #The two pointers are now at the start of the loop, return the associated node
+    return fastPointer 
+    
 def main(): 
     pass
 
