@@ -321,16 +321,59 @@ class sortStack:
 
 # 3.6 - Animal Shelter
 # An animal shelter operate stritly "FIFO" basis for only dogs and cats. 
-# People must adopt either the "oldest" (based on arrival time) of either animal, or adopt the oldest dog or cat 
-# Adopters cannot specify an animal of other arrival times to their liking. 
+# People must adopt either the "oldest" (based on arrival time) of either animal, or adopt the oldest dog or cat. Adopters cannot specify an animal of other arrival times to their liking. 
 # Create a data structure(s) to maintain this system and implement these operations: enqueue(), dequeueAny(), dequeueDog(), dequeueCat()
 # You may use a built-in Linked List data structure.
 
-class AnimalNode: 
-    def __init__(self, time):
-        pass 
+class AnimalNode:
+    def __init__(self, type):
+        self.number = None
+        self.type = type
+
+        AnimalNode.PRIORITY_NUM += 1
     
-class animalShelterQueue: 
+    def getOrder(self): 
+        return self.number
+    
+    def setOrder(self, number): 
+        self.number = number
+
+class AnimalQueue: 
     def __init__(self): 
         self.dogQueue = [] 
         self.catQueue = []
+        self.order = 0 
+    
+    def enqueue(self, item): 
+        self.item.setOrder(self.order)
+        self.order += 1
+
+        if (item.type == "dog"):
+            self.dogQueue.append(item)
+        elif (item.type == "cat"): 
+            self.catQueue.append(item)
+    
+    def dequeueAny(self):
+        #If either queue has no elements, return None
+        if (len(self.dogQueue) == 0) and (len(self.catQueue) == 0): 
+            return None
+
+        if (len(self.dogQueue == 0)): 
+            return self.dequeueCat()
+        elif (len(self.catQueue == 0)): 
+            return self.dequeueDog()
+
+        #Check the priorty number of both queues, and compare the numbers to return earliest animal
+        dog = self.dogQueue[0]
+        cat = self.catQueue[0]
+
+        if (dog.getOrder() < cat.getOrder()): 
+            return self.dequeueDog()
+        else: 
+            return self.dequeueCat()
+    
+    def dequeueDog(self): 
+        return self.dogQueue.remove(0)
+    
+    def dequeueCat(self): 
+        return self.catQueue.remove(0)
