@@ -7,14 +7,13 @@ Gayle Laakmann McDowell
 
 '''Chapter 4 - Trees and Graphs'''
 
+from tabnanny import check
+import sys
 
 # 4.1 - Route Between Nodes
 # Given a direct graph, design an algorithm to find out whether there is a route between two nodes.
 
 """Breadth-First Search case"""
-from tabnanny import check
-
-
 def routeFound(graph, node1, node2):
     #If the node references point to same node, return True by definition
     if (node1 == node2): 
@@ -185,21 +184,29 @@ def checkHeight(node):
 
 # 4.5 - Validate BST
 # Implement a function to check if a binary tree is a binary search tree. 
-# For this problem, the definition is assumed to be: left_nodes <= current_node < right_nodes
+# For this problem, the definition is assumed to be: left_nodes <= current_node < right_nodes. This means a duplicate value is permitted. 
 
-def validateBST(node): 
-    pass
+def chekBST(node):
+    return checkBSTInternal(node)
 
-def checkBST(node): 
+def checkBSTInternal(node, min = None, max = None): 
+    #Base case 
     if (node == None): 
-        return
+        return True
     
-    leftVal = checkBST(node.left)
-    rightVal = checkBST(node.right) 
+    #If minimum and maximum values are provided, and the current node's value is <= min or > max, this is not a BST
+    if ((min != None and node.val <= min) or (max != None and node.val > max)): 
+        return False
+    
+    #If the left node check fails or the right node check fails, return False, that is this is not a BST
+    if not (checkBSTInternal(node.left, min, node.val)) or not (checkBSTInternal(node.right, node.val, max)): 
+        return False
+    
+    return True
 
-    if (leftVal.val <= node.val) and (node.val < rightVal.val): 
-        return node
-    else: 
-        #This is the value to indicate that the binary tree is not a binary search tree
-        return
-
+# 4.6 - Successor
+# Write an algorithm to find the "next" node (i.e. in-order successor) of a given node in a binary search tree. 
+# You may assume that each node has a link to its parent. 
+    
+    
+  
