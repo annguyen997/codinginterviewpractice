@@ -207,6 +207,170 @@ def checkBSTInternal(node, min = None, max = None):
 # 4.6 - Successor
 # Write an algorithm to find the "next" node (i.e. in-order successor) of a given node in a binary search tree. 
 # You may assume that each node has a link to its parent. 
+# This solution assumes a "left < curr < right" binary search tree, meaning there are no duplicates
     
-    
+class TreeNode:
+    def __init__(self, value, parent=None): 
+        self.value = value
+        self.left = None
+        self.right = None
+        self.parent = parent
   
+def findSuccessor(node):
+    if (node == None): 
+        return None
+    
+    #If the given node has no right children, go up to parent
+    if (node.right == None):
+        currentNode = node 
+        parentNode = node.parent
+        
+        #Go up to another parent level as long as this is still the right subtree (i.e. go until at left subtree)
+        while (parentNode != None) and (parentNode.left != currentNode):
+            currentNode = parentNode
+            parentNode = parentNode.parent
+
+        return parentNode
+
+    else: 
+        return leftMostChild(node.right)
+    
+
+def leftMostChild(node): 
+    if (node == None):
+        return None
+    
+    while (node.left != None): 
+        node = node.left
+    
+    return node
+
+# 4.7 - Build Order
+# You are given a list of projects, and a list of dependencies (that is a list of pairs of projects, where the second project is dependent on the first project)
+# All of the project's dependencies must be built before the project is.
+# Find a build order that will allow the projects to be built. 
+# If there is no valid order, return an error.
+
+# This assumes any independent nodes (i.e. no dependencies and dependents) can be done at any time, so order of output may be arbitrary for those cases. 
+
+class ProjectNode:
+    def __init__(self, value): 
+        self.value = value
+        self.children = []
+        self.map = {}
+        self.incomingEdges = 0
+    
+    def addConnectingNodes(self, node): 
+        if not (self.map.get(node.getValue())): 
+            self.children.append(node)
+            self.map[node.getValue()] = node
+            node.incrementEdge()
+    
+    def getValue(self): 
+        return self.value
+
+    def getChildren(self): 
+        return self.children
+    
+    def getIncomingEdges(self):
+        return self.incomingEdges
+
+    def incrementEdge(self): 
+        self.incomingEdges += 1
+    
+    def decrementEdge(self): 
+        self.incomingEdges -= 1
+
+class ProjectGraph:
+    def __init__(self): 
+        self.nodes = [] 
+        self.map = {}
+    
+    def getNode(self, name):
+        #If the node is not in the graph 
+        if not (self.map.get(name)):
+            self.createNode(name)
+
+        #Get the node from the graph that has the associated name
+        return self.map.get(name)
+
+    #Create a new node to add to the graph
+    def createNode(self, name): 
+        node = ProjectNode(name)
+        self.nodes.append(node)
+        self.map[name] = node
+    
+    #Add an edge to the graph
+    def addEdge(self, node1, node2):
+        start = self.getNode(node1)
+        end = self.getNode(node2) 
+        start.addConnectingNodes(end)
+    
+    def getNodes(self): 
+        return self.nodes
+
+def buildOrder(projects, dependencies): 
+    if (projects == None):
+        return None
+    
+    if (dependencies == None): 
+        return projects
+
+    graph = buildGraph(projects, dependencies)
+    return orderProjects(graph.getNodes())
+        
+def buildGraph(projects, dependencies):
+    graph = ProjectGraph()
+
+    for project in projects: 
+        graph.createNode(project)
+
+    #For this function, assume dependencies is a list of tuples
+    for dependency in dependencies:
+        first, second = dependency
+        graph.addEdge(first, second)
+    
+    return graph
+        
+def orderProjects(nodes):
+    projectOrder = [0 * len(nodes)]
+
+    #Start with projects with zero dependencies
+    endofList = addNonDependent(projectOrder, nodes, 0)
+
+    toBeProccessed = 0 
+    while (toBeProccessed < len(projectOrder)):
+        current = projectOrder[toBeProccessed]
+
+        # A circular dependency, which means no applicable project order is found. Return None.
+        if (current == None): 
+            return None
+
+        # Go through the children of that node, decrement the dependency, and then add that node to order. 
+        children = current.getChildren()
+        for child in children:
+            child.decrementEdge()
+        
+        endofList = addNonDependent(projectOrder, children, endofList)
+        toBeProccessed += 1
+    
+    return projectOrder
+
+
+def addNonDependent(order, nodes, offset): 
+    for node in nodes: 
+        #If the node has no incoming nodes (that is no dependencies), add to order
+        if (node.getIncomingEdges() == 0): 
+            order[offset] = node
+            offset += 1
+    
+    return offset 
+
+def main(): 
+    projects = ["a", "b", "c", "d", "e", "f"]
+    dependencies = [("a", "d"), ("f", "b"), ("b", "d"), ("f", "a"), ("d", "c")]
+
+    print(buildOrder(projects, dependencies))
+
+
+main() 
