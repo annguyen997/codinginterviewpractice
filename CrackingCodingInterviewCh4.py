@@ -366,6 +366,136 @@ def addNonDependent(order, nodes, offset):
     
     return offset 
 
+"""Depth-First Search Solution"""
+
+
+# 4.8 - Find Common Ancestor
+# Design an algorithm and write code to find the first common ancestor of two nodes in a binary tree. 
+# Avoid storing additional nodes in a data structure. 
+# This is not necessarily a binary search tree. 
+
+#For this solution, assume the two nodes have links to the parent
+def findCommonAncestor(node1, node2):
+    if (node1 == None) or (node2 == None):
+        return None
+    
+    #Calculate the difference in depths of the two provided nodes
+    heightDelta = depth(node1) - depth(node2)
+
+    #Determine which one is the higher node
+    higherNode = node2 if heightDelta > 0 else node1
+    lowerNode = node1 if heightDelta > 0 else node2
+
+    #Raise the lower node up to the same depth as higher node 
+    lowerNode = goUpBy(lowerNode, abs(heightDelta))
+
+    #Once the nodes are at the same depth, go up towards the common ancestor if there is one
+    while (lowerNode != higherNode) and (lowerNode != None) and (higherNode != None): 
+        higherNode = higherNode.parent
+        lowerNode = lowerNode.parent
+
+    if (higherNode == None) or (lowerNode == None): 
+        return None
+
+    return higherNode
+
+def depth(node): 
+    depth = 0
+    while (node != None): 
+        node = node.parent
+        depth += 1
+    
+    return depth 
+
+def goUpBy(node, height):
+    while (node != None and height != 0): 
+        node = node.parent
+        height -= 1
+    
+    return node
+
+
+# 4.9 - BST Sequences
+# A binary search tree was created by traversing through an array from left to right and inserting each element.
+# Given a binary search tree with distinct elements, print all possible arrays that could have led to this tree.
+
+# This solution assumes this binary search tree has already been built. 
+def BSTSequences(node):
+    elementArray = [] 
+    
+    if (node == None): 
+        return elementArray
+    
+
+# 4.10 - Check Subtree
+# T1 and T2 are two very large binary trees, with T1 much bigger than T2. 
+# Create an algorithm to determine if T2 is a subtree of T1.
+
+# A tree T2 is a subtree of T1 IF there exists a node n in T1 such that the subtree of n is identical to T2. 
+# That is if you cut the tree at node n, the two trees would be identical. 
+
+def checkSubtree(nodeT1, nodeT2): 
+    if (nodeT1 == None):
+        return None 
+    
+    #If an empty subtree, by definition it is a subtree
+    if (nodeT2 == None): 
+        return True 
+
+    traversal1 = preOrderTraversal(nodeT1)
+    traversal2 = preOrderTraversal(nodeT2)
+
+    return traversal1 == traversal2
+
+def preOrderTraversal(node, traversal = ""): 
+
+    if (node == None): 
+        traversal += "X" + " "
+        return traversal
+
+    traversal += str(node.value) + " "
+    traversal = str(preOrderTraversal.left, traversal)
+    traversal = str(preOrderTraversal, traversal)
+
+    return traversal 
+
+# 4.11 - Random Node
+# You are implementing a binary tree class from scratch.
+# In addition to insert, find, and delete functions, there is a getRandomNode()
+# The getRandomNode() returns a random node from the tree. All nodes should be equally likely to be chosen. 
+# Design and implement an algorithm for getRandomNode, and explain how you would implement the rest of the methods. 
+
+class BinaryTree: 
+    def __init__(self): 
+        self.root = None
+        self.numberNodes = 0
+    
+    def insert(self, node): 
+        if (self.root == None): 
+            self.root = node
+        
+        self.numberNodes += 1
+    
+    def find(self, node): 
+        #If the root's value equals the value of provided node, return the node
+        if (node.val == self.root.val): 
+            return self.root
+        elif (node.val < self.root.val): 
+            return self.find(self.root.left) if self.root.left != 
+
+    def delete(self, node): 
+        self.numberNodes -= 1
+
+    def getRandomNode(self):
+        if (self.root == None): 
+            return None
+    
+    def getSize(self): 
+        return self.numberNodes
+
+         
+        
+
 def main(): 
     projects = ["a", "b", "c", "d", "e", "f"]
     dependencies = [("a", "d"), ("f", "b"), ("b", "d"), ("f", "a"), ("d", "c")]
