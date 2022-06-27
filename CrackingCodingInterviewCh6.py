@@ -76,3 +76,26 @@ p < 1/2
 This means Game 1 should be played if 0 < p < 0.5. If p = 0, 0.5, and 1, P(Game 1) = P(Game 2).
 """
 
+# 6.3 - Dominos 
+# There is an 8x8 chessboard in which two diagonally opposite corners have been cut off. 
+# You are given 31 dominos, and a single domino can cover exactly two squares. 
+# Can you use 31 dominos to cover the entire board? Prove your answer (by providing an example or show why it is impossible).
+
+
+"""Due to the nature of the 8x8 board and removing two diagonally opposite corners, this may not be possible to cover 
+the entire board of now 62 quares filled with all 31 dominos. There will be at least one that cannot fit due to several 
+dominos needing to stretch to other rows. 
+
+In addition, two diagonal opposite have the same color, meaning one color will have two more than the other color.
+A board has originally 32 white and 32 black spaces. If the black spaces are removed, it is just 30 black.
+
+A domino will cover exactly 1 white space and 1 black space. 31 dominos means 31 black and 31 white spaces covered. 
+There is not enough black to cover all dominos, hence it is impossible.
+"""
+
+# 6.4 - Ants on a Triangle
+# There are three ants on different vertices of a triangle. 
+# What is the probability of collision (between any two or all of them) if they start walking on the sides of the triangle? 
+# Assume that each ant randomly picks a direction, with either direction being equally likely to be chosen, and that they walk at the same speed. 
+
+# Similarly, find the probability of collision with n ants on an n-vertex polygon.

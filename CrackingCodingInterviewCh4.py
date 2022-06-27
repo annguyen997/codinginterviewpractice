@@ -7,8 +7,11 @@ Gayle Laakmann McDowell
 
 '''Chapter 4 - Trees and Graphs'''
 
+from os import pathsep
 from tabnanny import check
 import sys
+import random
+from turtle import left, right
 
 # 4.1 - Route Between Nodes
 # Given a direct graph, design an algorithm to find out whether there is a route between two nodes.
@@ -368,7 +371,6 @@ def addNonDependent(order, nodes, offset):
 
 """Depth-First Search Solution"""
 
-
 # 4.8 - Find Common Ancestor
 # Design an algorithm and write code to find the first common ancestor of two nodes in a binary tree. 
 # Avoid storing additional nodes in a data structure. 
@@ -424,8 +426,54 @@ def BSTSequences(node):
     elementArray = [] 
     
     if (node == None): 
+        elementArray.add(LinkedListNode())
         return elementArray
     
+    prefix = LinkedListNode() 
+    prefix.setValue(node.data)
+
+    # Recurse on both left and right subtrees
+    leftSequence = BSTSequences(node.left)
+    rightSequence = BSTSequences(node.right) 
+    
+    for leftNodes in leftSequence: 
+        for rightNodes in rightSequence: 
+            weaved = []
+            weaveLists(leftNodes, rightNodes, weaved, prefix)
+            
+            for weavedItem in weaved:
+                elementArray.add(weavedItem)
+    
+    return elementArray
+    
+def weaveLists(leftNodes, rightNodes, weavedList, prefix):
+    # One list is empty. Add remainder to (a cloned) prefix and store result. 
+    if (len(leftNodes) == 0) or (len(rightNodes) == 0): 
+        result = prefix.copy()
+
+        for leftNode in leftNodes:
+            result.add(leftNode) 
+
+        for rightNode in rightNodes: 
+            result.add(rightNode)
+
+        weavedList.add(result) 
+
+        return; 
+    
+    # Recurse with head of first of left node added to the prefix. 
+    headFirst = leftNode.removeFirst() 
+    prefix.addLast(headFirst)
+    weaveLists(leftNodes, rightNodes, weavedList, prefix) 
+    prefix.removeLast(headFirst) 
+    leftNodes.add(headFirst) 
+
+    # Recurse with head of the first of right node added to the prefix.
+    headSecond = rightNode.removeFirst() 
+    prefix.addLast(headSecond)
+    weaveLists(leftNodes, rightNodes, weavedList, prefix) 
+    prefix.removeLast(headSecond)
+    rightNodes.add(headSecond) 
 
 # 4.10 - Check Subtree
 # T1 and T2 are two very large binary trees, with T1 much bigger than T2. 
@@ -465,36 +513,171 @@ def preOrderTraversal(node, traversal = ""):
 # The getRandomNode() returns a random node from the tree. All nodes should be equally likely to be chosen. 
 # Design and implement an algorithm for getRandomNode, and explain how you would implement the rest of the methods. 
 
+class RandomTreeNode: 
+    def __init__(self, value): 
+        self.value = value
+        self.left = None
+        self.right = None
+        self.size = 0 
+    
+    def insert(self, value): 
+        if (value <= self.value): 
+            if (self.left == None): 
+                self.left = RandomTreeNode(value)
+            else: 
+                self.left.insert(value) 
+        else:
+            if (self.right == None): 
+                self.right = RandomTreeNode(value) 
+            else: 
+                self.right.insert(value) 
+        
+        self.size += 1
+    
+    def find(self, value): 
+        if (value == self.value): 
+            return self 
+        elif (value < self.value): 
+            return self.left.find(value) if self.left != None else None
+        elif (value > self.value):  
+            return self.right.find(value) if self.right != None else None
+        
+        return None
+    
+    def delete(self, value): 
+        pass
+
+    def getRandomNode(self): 
+        leftSize = self.left.getSize() if self.left != None else None
+        
+        #Start the random seed to generate random node of the tree. Getting size of left tree is important in probability (LEFT_SIZE * 1/n)
+        random.seed()
+        index = random.randInt(self.size) 
+
+        if (index < leftSize): 
+            return self.left.getRandomNode()
+        elif (index == leftSize): 
+            return self
+        else: 
+            return self.right.getRandomNode() 
+
+    def getIthIndex(self, index):
+        leftSize = self.left.getSize() if self.left != None else 0
+        if (index < leftSize): 
+            return self.left.getIthIndex(index) 
+        elif (index == leftSize): 
+            return self
+        elif (index > leftSize): 
+            return self.right.getIthIndex(index - (leftSize + 1))
+
+    def getSize(self): 
+        return self.size
+    
+    def getValue(self):
+        return self.value
+        
 class BinaryTree: 
     def __init__(self): 
         self.root = None
-        self.numberNodes = 0
     
-    def insert(self, node): 
+    def insert(self, value): 
         if (self.root == None): 
-            self.root = node
-        
-        self.numberNodes += 1
+            self.root = RandomTreeNode(value)
+        else:
+            self.root.insert(value)
     
     def find(self, node): 
         #If the root's value equals the value of provided node, return the node
         if (node.val == self.root.val): 
             return self.root
         elif (node.val < self.root.val): 
-            return self.find(self.root.left) if self.root.left != 
+            return self.find(self.root.left) if self.root.left != None else None
 
     def delete(self, node): 
         self.numberNodes -= 1
 
     def getRandomNode(self):
-        if (self.root == None): 
+        if (self.root == None):
             return None
+        
+        random.seed() 
+        index = random.randInt(self.getSize())
+
+        return self.root.getIthIndex(index) 
     
     def getSize(self): 
-        return self.numberNodes
+        return self.root.size() if self.root != None else None
 
          
-        
+# 4.12 - Paths with Sum
+# You are given a binary tree in which each node contains an integer value (which might be positive or negative). 
+# Design an algorithm to count the number of paths that sum to a given value. 
+# The path does not need to start or end at the root or a leaf, but it must go downwards (traveling only from parent nodes to child nodes). 
+
+def countPathsWithSum(root, targetSum):
+
+    if (root == None): 
+        return None
+    
+    #Check for paths from the root, if available 
+    numPathsFromRoot = countPathsWithSumFromNode(root, targetSum, 0)
+
+    #Check for paths from the left and right sides of the binary tree
+    numPathsFromLeft = countPathsWithSum(root.left, targetSum)
+    numPathsFromRight = countPathsWithSum(root.right, targetSum)
+
+    return numPathsFromLeft + numPathsFromRight + numPathsFromRoot
+
+def countPathsWithSumFromNode(node, targetSum, currentSum):
+    #If node is Null, return 0
+    if (node == None): 
+        return 0
+    
+    currentSum += node.value
+
+    totalPaths = 0 
+    #If the current sum matches the target path, add path
+    if (currentSum == targetSum): 
+         totalPaths += 1
+    
+    totalPaths += countPathsWithSumFromNode(node.left, targetSum, currentSum) 
+    totalPaths += countPathsWithSumFromNode(node.right, targetSum, currentSum)
+
+    return totalPaths
+    
+"""Optimized Solution"""
+def countPathsOptimized(root, targetSum): 
+    if (root == None): 
+        return 0
+    
+    pathCount = {} 
+
+    return countPathsWithSumOptimized(root, targetSum, 0, pathCount)
+
+def countPathsWithSumOptimized(node, targetSum, runningSum, pathCount): 
+    if (node == None): 
+        return 0
+
+    runningSum += node.data
+    sum = runningSum - targetSum
+    totalPaths = pathCount.get(sum) if (pathCount.get(sum) != 0) else 0 
+
+    if (runningSum == targetSum): 
+        totalPaths += 1
+    
+    #Increment pathCount, recurse for both sides of the binary tree, then decrement count
+    incrementPathCount(pathCount, runningSum, 1)
+    totalPaths += countPathsWithSumOptimized(node.left, targetSum, runningSum, pathCount)
+    totalPaths += countPathsWithSumOptimized(node.right, targetSum, runningSum, pathCount) 
+    incrementPathCount(pathCount, runningSum, -1)
+
+def incrementPathCount(pathCount, key, delta):
+    newCount = pathCount.get(key) + delta
+    if (newCount == 0): 
+        del pathCount[key]
+    else: 
+        pathCount[key] == newCount
+    
 
 def main(): 
     projects = ["a", "b", "c", "d", "e", "f"]
