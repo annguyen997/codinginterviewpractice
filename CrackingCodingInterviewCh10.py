@@ -33,7 +33,22 @@ def sortMergeTwoArrays(arrayA, arrayB):
         
     return arrayA 
 
-    
+# 10.2 - Group Anagrams
+# Write a method to sort an array of strings so that all the anagrams are next to each other. 
 
-        
-    
+def groupAnagrams(array): 
+    pass    
+
+
+def sortString(string1): 
+    stringSorted = sorted(list(string1))
+    string1 = str(stringSorted)
+
+    return string1
+
+# 10.3 - Search in Rotated Array
+# Given a sorted array of n integers that has been rotated an unknown number of times, write code to find an element in an array. 
+# You may assume that the array was originally sorted in increasing order. 
+
+# 10.4 - Sorted Search, No Size
+
