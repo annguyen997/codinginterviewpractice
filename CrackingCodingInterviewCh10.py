@@ -109,4 +109,31 @@ def searchRotatedArray(array, number, left, right):
     return -1 
 
 # 10.4 - Sorted Search, No Size
+# You are given an array-like data structure Listy which lacks a size method. 
+# It does, however, have an elementAt(i) method that returns the element at index i in O(1) time.
+# If i is beyond the bounds of the data structure, it returns -1. For this reason, the data structure only supports positive integers. 
+# Give a Listy which contains sorted, positive integers, find the index at which an element x occurs. 
+# If x occurs multiple times, you may return any index.  
 
+def searchWithNoSize(list, element): 
+	#Double the index by two until reach end of bounds of data structure
+	index = 1
+	while (list[index] != -1) and (list.elementAt(index) < element) : 
+		index *= 2 
+
+	return binarySearchMod1(list, element, index / 2, index)
+
+def binarySearchMod1(list, element, low, high):
+    while (low <= high):
+        mid = low + high / 2
+
+        if (list[mid] == element): 
+            return mid 
+
+        elif (list[mid] < element): 
+            low = mid + 1
+            
+        elif (list[mid] > element) or (list[mid] == -1): 
+            high = mid - 1
+    
+    return -1
