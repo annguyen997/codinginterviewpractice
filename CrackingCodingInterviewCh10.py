@@ -132,8 +132,11 @@ def binarySearchMod1(list, element, low, high):
 
         elif (list[mid] < element): 
             low = mid + 1
-            
+
         elif (list[mid] > element) or (list[mid] == -1): 
             high = mid - 1
     
     return -1
+
+# 10.5 - Sparse Search
+# Given a sorted array of strings that is interspersed with empty strings, write a method to find the location of a given string. 
