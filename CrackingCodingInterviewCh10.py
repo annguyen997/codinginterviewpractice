@@ -140,3 +140,176 @@ def binarySearchMod1(list, element, low, high):
 
 # 10.5 - Sparse Search
 # Given a sorted array of strings that is interspersed with empty strings, write a method to find the location of a given string. 
+
+#This assumes the strings in the array follow ASCII order
+def sparseSearch(array, string): 
+    
+    #Edge cases
+    if (array == None) or (string == None) or (string == ""): 
+        return -1 
+
+    low = 0
+    high = len(array) - 1
+    mid = low + high / 2 
+
+    while (low < high): 
+        #If the midpoint is the given string, return the index
+        if (array[mid] == string): 
+            return mid 
+
+        #If not, check if the midpoint is an empty string: 
+        if (array[mid] == ""):
+
+            #Find the clostest index with a non-empty string.
+            left = mid - 1
+            right = mid + 1
+
+            while (True): 
+                if (left < low) and (right > high): 
+                    return -1
+                elif (right <= high) and (array[right] != ""): 
+                    mid = right
+                    break 
+                elif (left >= low) and (array[left] != ""): 
+                    mid = left
+                    break
+                
+                right += 1
+                left -= 1
+
+        if (array[mid] < string):
+            low = mid + 1
+        else: 
+            high = mid - 1
+    
+    return -1
+
+# 10.6 - Sort Big File
+# Imagine you have a 20 GB file with one string per line. 
+# Explain how you would sort the file. 
+
+""" Sorting a file of 20 GB would result in possible memory overflow, crashing the program.
+
+The mechanism to sort a big file is to partition the file into chunks of "x" number of memory. 
+Each partition would then be sorted separately, using merge sort. Save each file separately into file system.
+
+Using the file system, merge the files - one by one. Use the larger file as a reference spot; sort using the smaller file.
+
+"""
+
+# 10.7 - Missing Int
+# Given an input file with four billion non-negative integers, provide an algorithm to generate an integer that is not contained in the file.
+# Assume you have 1 GB of memory available for this task. 
+
+# FOLLOW-UP: What if you have only 10 MB of memory. 
+# Assume that all the values are distinct and we now have no more than one billion non-negative integers. 
+
+# This solution assumes the numbers are all integers, and some integers may repeat. 
+
+
+# 10.8 - Find Duplicates
+# You have an array with all the numbers from 1 to N, where N is at most 32,000. 
+# The array may have duplicate entries, and you do not know what N is. 
+# With only 4 KB of memory available, how would you print all duplicates elements in the array? 
+
+# Constraints: N in range 1 - 32,000; duplicates permitted 
+
+def findDuplicates(list): 
+
+    bs = BitVector(len(list))
+
+    for i in range(len(list)): 
+        number = list[i] 
+        numBit = number - 1  #Recall number N is in range 1-32K; bits start at 0
+        if (bs.get(numBit)): 
+            print(number) 
+        else: 
+            bs.set(numBit) 
+    
+
+# This solution assumes defining a BitVector class. 
+class BitVector: 
+    
+    def __init__(self, size): 
+        self.bitSet = [0] * size
+    
+    def get(self, pos): 
+        wordNumber = (pos >> 5) #Divide by 32
+        bitNumber = (pos & 0x1F) #Modular by 32
+
+        return (self.bitSet[wordNumber] and (1 << bitNumber)) != 0
+
+    def set(self, pos): 
+        wordNumber = (pos >> 5)
+        bitNumber = (pos & 0x1F) 
+        self.bitSet[wordNumber] |= 1 << bitNumber
+
+# 10.9 - Sorted Matrix Search
+# Given an M x N matrix in which each row and each column is sorted in ascending order, write a method to find an element.
+
+# 10.10 - Rank from Stream
+# Imagine you are reading in a stream of integers. 
+# Periodically, you wish to be able to look up the rank of a number x (the number of values less than or equal to x). 
+# Implement the data structures and algorithms to support these operations. 
+#   - Implement the track(int x) method, which is called when each number is generated. 
+#   - Implement the getRankOfNumber(int x) method, which returns the number of values <= x (not including x itself). 
+
+# This solution cannot assume the binary tree will be balanced. If unbalanced, the runtime is O(N). Best case is O(log N) 
+class RankNode: 
+    def __init__(self, data): 
+        self.data = data
+        self.left = None
+        self.right = None
+        self.left_size = 0 
+    
+    def insert(self, number): 
+        if (number < self.data):
+            if (self.left != None): 
+                self.left.insert(number)
+            else: 
+                self.left = RankNode(number)
+            self.left_size += 1
+        else: 
+            if (self.right != None): 
+                self.right.insert(number) 
+            else: 
+                self.right = RankNode(number) 
+    
+    def getRank(self, number):
+        if (number == self.data):
+            return self.left_size
+        elif (number < self.data):
+            if (self.left == None): 
+                return -1
+            return self.left.getRank(number)
+        elif (number > self.data):
+            if (self.right == None): 
+                return -1
+            return self.left_size + 1 + self.right.getRank(number) 
+            
+class BinaryTreeRank: 
+    def __init__(self, root = None):
+        self.root = root
+    
+    def insertNum(self, number): 
+        if (self.root == None): 
+            self.root = RankNode(number)
+        else: 
+            self.root.insert(number) 
+
+    def getRankOfNumber(self, number):
+        return self.root.getRank(number)
+
+    def track(self, number): 
+        if (self.root == None): 
+            self.root = RankNode(number)
+        else: 
+            self.root.insert(number)
+
+# 10.11 - Peaks and Valleys
+# In an array of integers: 
+# A "peak" is an element which is greater than or equal to the adjacen integers. 
+# A "valley" is an element which is less than or equal to the adjacent integers. 
+# EXAMPLE: In array [5, 8, 6, 2, 3, 4, 6]: {8, 6 (the second)} are peaks, and {5, 2} are valleys. 
+
+# Given an array of integers, sort the array into an alternating sequence of peaks and valleys 
