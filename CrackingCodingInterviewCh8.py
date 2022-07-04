@@ -43,7 +43,54 @@ def runStairsCountsMemo(n, listMemory):
 		return listMemory[n]
 
 # 8.2 - Robots in a Grid
+# Imagine a robot sitting on the upper left corner of grid with r rows and c columns. 
+# The robot can only move in two directions, right and down. 
+# There are certain cells that are "off limits" such that robot cannot step on them. 
+# Design an algorithm to find a path for the robot from the top left to the bottom right. 
 
+class Point: 
+	def __init__(self, row, column): 
+		self.row = row
+		self.column = column 
+
+def getPath(maze): 
+	#Base case 
+	if (maze == None) or (len(maze) == 0): 
+		return None
+
+	path = []
+	failedPoints = set() 
+	if (getPath(maze, len(maze) - 1, len(maze[0]) - 1, path, failedPoints)):
+		return path 
+	return None
+
+
+def getPath(maze, row, column, path, failedPoints):
+	# If a cell is not available/out of bounds or column/row < 0 (i.e. out of bounds), return False
+	if (column < 0) or (row < 0) or not (maze[row][column]): 
+		return False
+
+	currentPoint = Point(row, column) 
+
+	# Check if the current point is failed point (that is this cell is already visited and not allowed)
+	if (currentPoint in failedPoints):
+		return False 
+
+	# Check if the cell is at the upper-left corner of the maze. 
+	isAtOrigin = (row == 0) and (column == 0) 
+
+	if (isAtOrigin) or (getPath(maze, row, column - 1, path, failedPoints)) or (getPath(maze, row - 1, column, maze, failedPoints)):
+		#point = Point(row, column)
+		path.append(currentPoint)
+		return True
+	
+	# Cache current point
+	failedPoints.add(currentPoint)
+	
+	return False 
+	
+	
+	
 
 # 8.3 - Magic Index
 # A magic index in an array A[0 ... n-1] is defined to be an index such that A[i] = i. 
