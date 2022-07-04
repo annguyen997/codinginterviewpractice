@@ -86,11 +86,10 @@ def getPath(maze, row, column, path, failedPoints):
 	
 	# Cache current point
 	failedPoints.add(currentPoint)
-	
+
 	return False 
 	
-	
-	
+
 
 # 8.3 - Magic Index
 # A magic index in an array A[0 ... n-1] is defined to be an index such that A[i] = i. 
