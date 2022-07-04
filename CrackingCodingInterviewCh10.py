@@ -7,6 +7,8 @@ Gayle Laakmann McDowell
 
 '''Chapter 10 - Sorting and Searching'''
 
+import sys 
+
 # 10.1 - Sorted Merge
 # You are given two sorted arrays, A and B, where A has a large enough buffer at the end to hold B. 
 # Write a method to merge B into A in sorted order. 
@@ -247,6 +249,91 @@ class BitVector:
 # 10.9 - Sorted Matrix Search
 # Given an M x N matrix in which each row and each column is sorted in ascending order, write a method to find an element.
 
+"""Naive Solution"""
+def findElementInMatrix(matrix, element): 
+    row = len(matrix) 
+    col = len(matrix[0]) - 1
+
+    if (row < len(matrix)) and (col >= 0): 
+        if matrix[row][col] == element: 
+            return True
+        elif (matrix[row][col] < element): 
+            row += 1
+        else: 
+            col -= 1
+    
+    return False 
+
+"""Optimized Soluion"""
+class Coordinate: 
+    def __init__(self, row, column): 
+        self.row = row
+        self.column = column
+    
+    def inbounds(self, matrix): 
+        return self.row >= 0 and self.row < len(matrix) and self.column < len(matrix[0]) 
+
+    def isBefore(self, coordinate): 
+        return self.row <= coordinate.row and self.column <= coordinate.column
+    
+    def copy(self): 
+        return Coordinate(self.row, self.column) 
+    
+    def setToAverage(self, min, max): 
+        self.row = (min.row + max.row) / 2
+        self.column = (min.column + max.column) / 2
+    
+
+def findElementInMatrixOp(matrix, origin, destination, element): 
+
+    # If the coordinates for the origin and/or destination are not in the matrix, return None (i.e. out of bounds)
+    if not (origin.inbounds(matrix)) or (destination.inbounds(matrix)): 
+        return None
+    
+    # If the element in question is at the origin, return origin
+    if (matrix[origin.row][origin.column] == element): 
+        return origin
+    # If the destination element is not before origin, coordinates are out of bounds
+    elif not (origin.isBefore(destination)): 
+        return None
+
+    # Calculate the diagonal length (note the matrix may not be perfect square) for binary search of diagonal 
+    start = origin.copy()
+    diagonalDistance = min(destination.row - origin.row, destination.column - origin.column)
+    end = Coordinate(start.row + diagonalDistance, start.column + diagonalDistance)
+
+    # Create new Coordinate object that is used in the binary search of diagonal 
+    newCoordinate = Coordinate(0, 0) 
+
+    # Perform binary search on the diagonal, looking for the very first element that is greater than provided element
+    while (start.isBefore(end)): 
+        newCoordinate.setToAverage(start, end)
+
+        # If element is greater than the element at new coordinates 
+        if (element > matrix[newCoordinate.row][newCoordinate.column]): 
+            start.row = newCoordinate.row + 1
+            start.column = newCoordinate.column + 1 
+        else: 
+            end.row = newCoordinate.row - 1
+            end.column = newCoordinate.column - 1
+    
+    # If the element in question is not in diagonal, split the matrix into quadrants 
+    return partitionAndSearch(matrix, origin, destination, start, element)
+
+def partitionAndSearch(matrix, origin, destination, pivot, element): 
+    lowerLeftOrigin = Coordinate(pivot.row, origin.column)
+    lowerLeftDest = Coordinate(destination.row, pivot.column - 1)
+    upperRightOrigin = Coordinate(origin.row, pivot.column) 
+    upperRightDest = Coordinate(pivot.row - 1, destination.column)
+
+    lowerLeft = findElementInMatrixOp(matrix, lowerLeftOrigin, lowerLeftDest, element) 
+    if (lowerLeft == None): 
+        return findElementInMatrixOp(matrix, upperRightOrigin, upperRightDest, element)
+    return lowerLeft
+
+
+
+    
 # 10.10 - Rank from Stream
 # Imagine you are reading in a stream of integers. 
 # Periodically, you wish to be able to look up the rank of a number x (the number of values less than or equal to x). 
@@ -313,3 +400,32 @@ class BinaryTreeRank:
 # EXAMPLE: In array [5, 8, 6, 2, 3, 4, 6]: {8, 6 (the second)} are peaks, and {5, 2} are valleys. 
 
 # Given an array of integers, sort the array into an alternating sequence of peaks and valleys 
+
+def sortValleyPeak(array):
+    length = len(array)
+
+    for i in range(1, length, 2): 
+        biggestIndex = maxIndex(array, i-1, i, i+1)
+        if array[i] != biggestIndex: 
+            swapElements(array, i, biggestIndex)
+
+# Find the index of the largest number of the three numbers in an array at a time.
+def maxIndex(array, left, middle, right): 
+    length = len(array) 
+
+    valueLeft = array[left] if (left > 0) and (left < length) else sys.minint
+    valueMiddle = array[middle] if (middle > 0) and (middle < length) else sys.minint
+    valueRight = array[right] if (right > 0) and (right < length) else sys.minint
+
+    maxValue = max(valueLeft, valueMiddle, valueRight)
+    if (maxValue == valueLeft): 
+        return left
+    elif (maxValue == valueMiddle): 
+        return middle
+    else: 
+        return right
+
+def swapElements(array, left, right): 
+    temp = array[right]
+    array[right] = array[left] 
+    array[left] = temp 
