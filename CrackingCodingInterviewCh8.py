@@ -89,12 +89,65 @@ def getPath(maze, row, column, path, failedPoints):
 
 	return False 
 	
-
-
 # 8.3 - Magic Index
 # A magic index in an array A[0 ... n-1] is defined to be an index such that A[i] = i. 
 # Given a sorted array of distinct integers, write a method to find a magic index, if one exists, in array A. 
 
+# FOLLOW-UP: What if the values are not distinct? 
+
+"""Brute Force Algorithm"""
+def magicIndexBruteForce(array): 
+	for i in range(len(array)): 
+		if (array[i] == i):
+			return i 
+	
+	return -1
+
+"""Optimized Algorithm"""
+def magicIndex(array): 
+	return magicIndex(array, 0, len(array)-1)
+
+def magicIndex(array, start, end): 
+	mid = (start + end) / 2
+
+	while (start < end):
+		if (array[mid] == mid): 
+			return mid
+		elif (array[mid] < mid): 
+			start = mid + 1
+		else: 
+			end = mid - 1
+	
+	return -1
+
+def magicIndex(array, start, end):
+	"""
+	mid = (start + end) / 2
+
+	while (start < end):
+		if (array[mid] == mid): 
+			return mid
+		elif (array[mid] < mid): 
+			start = mid + 1
+		else: 
+			end = mid - 1
+	
+	return -1
+	"""
+
+	if (end < start): 
+		return -1 
+	
+	mid = (start + end) / 2
+
+	if (array[mid] == mid): 
+		return mid
+	elif (array[mid] < mid): 
+		return magicIndex(array, mid+1, end)
+	else: 
+		return magicIndex(array, start, mid - 1) 
+
+"""Follow-Up Question"""
 
 # 8.4 - Power Set
 # Write a method to return all subsets of a set. 
@@ -161,7 +214,24 @@ def minProductHelper(smaller, larger, memo):
 	#return memo[smaller]
 	return side2
 
-	
+# 8.6 - Towers of Hanoi
+# In this classic problem, you have 3 towers and N disks of different sizes which can slide onto any tower. 
+# The puzzle starts with disks sorted in ascending order of size from top to bottom (i.e. each disk sits on top of an even larger one). 
+# You have the following constraints: 
+# (1) Only one disk can be moved at a time. 
+# (2) A disk is slide off the top of one tower onto another disk. 
+# (3) A disk cannot be placed on top of a smaller disk. 
+# Write a program to move the disks from teh first tower to the last using these 3 stacks. 
+
+
+# 8.7 - Permutations without Dups
+# Write a method to compute all permutations of a string of unique characters. 
+
+
+
+# 8.8 - Permutation with Dups
+# Write a method to compute all permutations of a string whose characters are not necessarily unique. 
+# the list of permutations should not have duplicates.
 
 
 
