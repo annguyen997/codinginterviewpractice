@@ -13,7 +13,6 @@ Gayle Laakmann McDowell
 
 from ast import Set
 
-
 def runStairsCounts(n): 
 	#Base cases
 	if (n < 0):
@@ -148,6 +147,32 @@ def magicIndex(array, start, end):
 		return magicIndex(array, start, mid - 1) 
 
 """Follow-Up Question"""
+def magicIndexFollowUp(array): 
+	return magicIndex(array, 0, len(array)-1)
+
+def magicIndexFollowUp(array, start, end):
+	if (end < start): 
+		return -1 
+	
+	mid = (start + end) / 2
+	midValue = array[mid]
+
+	if (midValue == mid): 
+		return mid
+	
+	# Search left
+	leftIndex = min(mid - 1, midValue)
+	left = magicIndex(array, start, leftIndex) 
+
+	if (left >= 0): 
+		return left 
+	
+	# Search right
+	rightIndex = max(mid + 1, midValue) 
+	right = magicIndex(array, rightIndex, end)
+	
+	return right  #May return index or -1
+
 
 # 8.4 - Power Set
 # Write a method to return all subsets of a set. 
@@ -221,7 +246,59 @@ def minProductHelper(smaller, larger, memo):
 # (1) Only one disk can be moved at a time. 
 # (2) A disk is slide off the top of one tower onto another disk. 
 # (3) A disk cannot be placed on top of a smaller disk. 
-# Write a program to move the disks from teh first tower to the last using these 3 stacks. 
+# Write a program to move the disks from the first tower to the last using these 3 stacks. 
+
+def towersOfHanoi(): 
+	stacks = 3 
+	towers = [] 
+
+	# Create the towers
+	for i in range(stacks): 
+		towers.append(Tower(i))
+	
+	# Add elements to the tower, starting at the index - 1
+	i = stacks - 1 
+	while (i >= 0): 
+		towers[0].add(i)
+		i =- 1
+	
+	towers[0].moveDisks(stacks, towers[2], towers[1])
+
+# Tower 1 is the origin tower; Tower 2 is the buffer tower; and Tower 3 is the destination tower
+# Both Tower 1 and 3 may be using as buffers 
+class Tower: 
+	def __init__(self, index): 
+		self.disks = []
+		self.index = index 
+	
+	def getIndex(self): 
+		return self.index
+	
+	def isEmpty(self): 
+		return len(self.disks) == 0
+	
+	def peek(self): 
+		return self.disks[-1]
+
+	def add(self, number): 
+		if (not self.isEmpty()) and (self.peek() <= number):
+			return
+		self.disks.append(number)
+
+	def moveTop(self, stack): 
+		element = self.disks.pop()
+		stack.add(element)
+	
+	def moveDisks(self, n, destination, buffer): 
+		if (n > 0): 
+			# Move top n - 1 disks from origin to buffer (middle tower), using destination as an intermediate 
+			self.moveDisks(n-1, buffer, destination)
+
+			# Move n (top most disk at this point) from origin to destination 
+			self.moveTop(destination)
+
+			# Move top n - 1 disks from buffer to destination, using origin (first tower) as an intermediate 
+			buffer.moveDisks(n-1, destination, self)
 
 
 # 8.7 - Permutations without Dups
