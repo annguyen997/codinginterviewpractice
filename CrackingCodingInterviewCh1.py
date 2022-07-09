@@ -6,9 +6,9 @@ Gayle Laakmann McDowell
 '''
 
 '''Chapter 1 - Arrays and Strings'''
-# 1.1 - Is Unique: 
-# - Implement an algorithm to determine if a string has all unique characters.
-# - What if you cannot use additional data structures?
+# 1.1 - Is Unique
+# Implement an algorithm to determine if a string has all unique characters.
+# What if you cannot use additional data structures?
 def isUnique(text): 
 
     #Get the length of the text
@@ -30,7 +30,7 @@ def isUnique(text):
     
     return True
 
-# 1.2 - Check Permutation: 
+# 1.2 - Check Permutation
 # Given two strings, write a method to decide if one is a permutation of the other 
 # - Assume letters are case senstitive
 # - Assume whitespace is significant
@@ -67,8 +67,8 @@ def checkPermutation(string1, string2):
         
     return True 
 
-# 1.3 - URLify: 
-# - Write a method to rpelace all spaces in a string with '%20'.
+# 1.3 - URLify
+# Write a method to rpelace all spaces in a string with '%20'.
 # - Assume string has sufficient space at end to hold additional characters 
 # - Assume that the true length of the string is provided 
 
@@ -84,7 +84,7 @@ def URLify(url):
     
     return newString
 
-# 1.4 - Palindrome Permutation: 
+# 1.4 - Palindrome Permutation
 # Given a string, check if it is a permutation of a palindrome. 
 # The palindrome does not need to be limited to just dictionary words. 
 # Assume the characters are alphanumeric; other characters are disregarded for purposes of calculation.
@@ -117,7 +117,7 @@ def checkPermutationIsPalindrome(string):
 
     return True  
         
-# 1.5 - One Away: 
+# 1.5 - One Away
 # There are three types of edits that can be performed on strings: Insert, remove, or replace (a character)
 # Given two strings, write a function to check if they are one edit (or zero edits) away. 
 
