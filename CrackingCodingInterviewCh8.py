@@ -496,3 +496,42 @@ def makeChange(amount, denominations, index, map):
 # 8.12 - Eight Queens
 # Write an algorithm to print all ways of arranging eight queens on an 8x8 chess board so that none of them share the same row, column, or diagonal. 
 # In this case, "diagonal" means all diagonals, not just the two that bisect the board. 
+
+def placeQueens(row, columns, results): 
+	GRID_SIZE = 8 
+
+	if (row == GRID_SIZE): 
+		results.add(columns.copy())
+	else: 
+		col = 0 
+		while (col < GRID_SIZE): 
+			if (checkValid(columns, row, col)): 
+				columns[row] = col 
+				placeQueens(row + 1, columns, results)
+			col += 1
+	
+	return results
+
+# Check if (row1, col1) is a valid spot to place a queen. Check if there is already a queen in the same column or diagonal. Checking rows is not necessary
+def checkValid(columns, row1, col1):
+	row2 = 0 
+	# Check each of the rows to see if there is a spot 
+	while (row2 < row1): 
+		
+		col2 = columns[row2] 
+		# If column 2 is already occupied by a queen at another row, return False
+		if (col1 == col2):
+			return False
+		
+		# Check diagonals
+		columnDistance = abs(col2 - col1)
+		rowDistance = row2 - row1  #By definition row1 > row2 so no absolute value calculation needed
+
+		# If column distance equals row distance, there is a queen in the same diagonal, return False
+		if (columnDistance == rowDistance): 
+			return False
+		
+	return True
+
+# 8.13 - Stack of Boxes
+# 
