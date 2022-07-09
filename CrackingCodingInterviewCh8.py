@@ -13,6 +13,7 @@ Gayle Laakmann McDowell
 
 from ast import Set
 from operator import index
+import re
 
 def runStairsCounts(n): 
 	#Base cases
@@ -430,8 +431,68 @@ def buildParens(number):
 	
 	return parenSet
 
+# 8.10 - Paint Fill
+# Implement the "paint fill" function that one might see on many image editing programs. 
+# That is, given a screen (represented by 2D array of colors), a point, and a new color, fill in the surrounding area until the color changes from the original color. 
 
+def paintFill(screen, row, column, color): 
+	if screen[row][color] == color: 
+		return False 
+
+	return paintFill(screen, row, column, screen[row][column], color)
+
+def paintFill(screen, row, column, oldColor, newColor):
 	
+	# Screen goes out of bounds
+	if ((row < 0) or (row >= len(screen))) or ((column < 0) or (column >= len(screen[0]))): 
+		return False
+	
+	if (screen[row][column] == oldColor): 
+		# Set the new color
+		screen[row][column] == newColor
 
+		# Loop though each of the adjacent cells to change color 
+		paintFill(screen, row-1, column, oldColor, newColor) # Up
+		paintFill(screen, row+1, column, oldColor, newColor) # Down
+		paintFill(screen, row, column-1, oldColor, newColor) # Left
+		paintFill(screen, row, column+1, oldColor, newColor) # Right
+	
+	return True
 
+# 8.11 - Coins
+# Given an infinite number of quarters (25 cents), dimes (10 cents), nickels (5 cents), and pennies (1 cent)...
+# Write code to calculate the number of ways of representing n cents.
 
+def makeChange(cents): 
+	denominations = [25, 10, 5, 1]
+	map = [[0]*(cents+1)]*len(denominations)
+
+	return makeChange(cents, denominations, 0, map)
+
+def makeChange(amount, denominations, index, map): 
+
+	# If such cents has already been calculated, return value
+	if map[amount][index] > 0: 
+		return map[amount][index]
+
+	# If index is higher than length of denominations available, return 1 (past last denomination)
+	if (index >= len(denominations) - 1): 
+		return 1
+	
+	ways = 0 
+	denomAmount = denominations[index] 
+
+	i = 0
+	while (i * denomAmount <= amount): 
+		amountRemaining = amount - (i * denomAmount)
+		ways += makeChange(amountRemaining, denominations, index + 1, map) 
+		i += 1
+	
+	map[amount][index] = ways  # This assumes object by reference
+	
+	# Return the amount of ways 
+	return ways 
+
+# 8.12 - Eight Queens
+# Write an algorithm to print all ways of arranging eight queens on an 8x8 chess board so that none of them share the same row, column, or diagonal. 
+# In this case, "diagonal" means all diagonals, not just the two that bisect the board. 
