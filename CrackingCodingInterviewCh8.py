@@ -401,5 +401,37 @@ def printPerm(mapping, prefix, remaining, result):
 			printPerm(mapping, prefix + character, remaining - 1, result)
 			mapping[character] = count
 	
+# 8.9 - Parens
+# Implement an algorithm to print all valid (i.e. properly opened and closed) combinations of n pairs of parentheses. 
+
+# Example: 
+# Input: 3
+# Output: ((())), (()()), (())(), ()(()), ()()()
+
+"""Naive Solution"""
+def buildParens(number): 
+	parenSet = Set() 
+
+	# Base case 
+	if (number == 0): 
+		parenSet.add("")
+	else: 
+		prev = buildParens(number - 1)
+
+		for stringParen in prev: 
+			for i in range(len(stringParen)): 
+
+				if stringParen[i] == '(': 
+					start = stringParen[0:i+1]
+					end = stringParen[i+1:-1]
+					parenSet.add(start + "()" + end)
+		
+		parenSet.add("()" + stringParen)
+	
+	return parenSet
+
+
+	
+
 
 
