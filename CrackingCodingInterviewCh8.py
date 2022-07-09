@@ -12,6 +12,7 @@ Gayle Laakmann McDowell
 # Implement a method to count how many possible ways the child can run up the stairs.
 
 from ast import Set
+from operator import index
 
 def runStairsCounts(n): 
 	#Base cases
@@ -303,12 +304,102 @@ class Tower:
 
 # 8.7 - Permutations without Dups
 # Write a method to compute all permutations of a string of unique characters. 
+"""Builiding permutations based on first n-1 characters"""
+def getPerms(string): 
 
+	#Base case of no string
+	if (string == None): 
+		return None
+	
+	permutations = [] 
+
+	# Base case
+	if (len(string) == 0):   
+		permutations.append("")
+		return permutations
+	
+	# Get the character of the first part of string
+	first = string[0]
+	remainder = string[1:-1]
+	words = getPerms(remainder) 
+
+	for word in words: 
+		# Get the length of the word
+		length = len(word) 
+
+		# Index for each part of the word
+		for i in range(length): 
+			string = insertChar(first, word, i) 
+			permutations.append(string) 
+	
+	return permutations
+	
+def insertChar(character, word, index): 
+	start = word[0:index]
+	end = word[index:-1]
+	return start + character + end 
+
+"""Building Permutations from all (n-1) strings"""
+def getPermsAlt(remainder): 
+
+	#Get the length of the remainder string
+	length = len(remainder) 
+	result = []
+
+	# Base case 
+	if (length == 0): 
+		result.append("") 
+		return result 
+	
+	# Add remainder string 
+	for i in range(length):
+		before = remainder[0:i]
+		after = remainder[i:-1]
+		partials = getPermsAlt(before + after)
+
+		for word in partials: 
+			result.append(remainder[i] + word)
+	
+	return result 
 
 
 # 8.8 - Permutation with Dups
 # Write a method to compute all permutations of a string whose characters are not necessarily unique. 
 # the list of permutations should not have duplicates.
 
+def printPerm(string): 
+	result = [] 
+	mapping = buildFreqTable(string) 
+	printPerm(mapping, "", len(string), result) 
+	return result 
+
+def buildFreqTable(string): 
+	mapping = {}
+	
+	for char in string: 
+		if char not in mapping:
+			mapping[char] = 0
+
+		mapping[char] = mapping.get(char) + 1
+	
+	return mapping 
+
+# This assumes the result is object by reference
+def printPerm(mapping, prefix, remaining, result):
+
+	#Base case
+	if (remaining == 0): 
+		result.append(prefix)
+		return
+
+	keySet = mapping.keys() 
+	for character in keySet: 
+		count = mapping[character] 
+
+		if (count >= 0): 
+			mapping[character] = mapping.get(character) - 1
+			printPerm(mapping, prefix + character, remaining - 1, result)
+			mapping[character] = count
+	
 
 
