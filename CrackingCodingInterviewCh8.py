@@ -321,7 +321,7 @@ def getPerms(string):
 	
 	# Get the character of the first part of string
 	first = string[0]
-	remainder = string[1:-1]
+	remainder = string[1:len(string)]
 	words = getPerms(remainder) 
 
 	for word in words: 
@@ -337,7 +337,7 @@ def getPerms(string):
 	
 def insertChar(character, word, index): 
 	start = word[0:index]
-	end = word[index:-1]
+	end = word[index:len(word)]
 	return start + character + end 
 
 """Building Permutations from all (n-1) strings"""
@@ -355,7 +355,7 @@ def getPermsAlt(remainder):
 	# Add remainder string 
 	for i in range(length):
 		before = remainder[0:i]
-		after = remainder[i:-1]
+		after = remainder[i:len(remainder)]
 		partials = getPermsAlt(before + after)
 
 		for word in partials: 
@@ -424,7 +424,7 @@ def buildParens(number):
 
 				if stringParen[i] == '(': 
 					start = stringParen[0:i+1]
-					end = stringParen[i+1:-1]
+					end = stringParen[i+1:len(stringParen)]
 					parenSet.add(start + "()" + end)
 		
 		parenSet.add("()" + stringParen)
@@ -534,4 +534,123 @@ def checkValid(columns, row1, col1):
 	return True
 
 # 8.13 - Stack of Boxes
-# 
+# You have a stack of n boxes, with widths w(i), heights h(i)), and depths d(i).
+# The boxes cannot be rotated and can only be stacked on top of one another if each box in the stack is strictly larger than the box above it in width, height, and depth.
+# Implement a method to compute the height of the tallest possible stack.
+# The height of a stack is the sum of the heights of each box. 
+
+# Assume the boxes list has already be created. The list contains objects of just type Box.
+def createStack(boxes): 
+	boxes = sorted(boxes, cmp=compare(), reverse=True)   # List by descending order; highest height first
+	maxHeight = 0 
+	stackMap = [0]*len(boxes)   # This assumes object by reference
+
+	for i in range(len(boxes)): 
+		height = createStack(boxes, i, stackMap) 
+		maxHeight = max(maxHeight, height)
+	
+	return maxHeight
+
+def createStack(boxes, bottomIndex, results):
+
+	# If the results were already calculated previously, return the result given
+	if (bottomIndex < len(boxes) and results[bottomIndex] > 0): 
+		return results[bottomIndex]
+
+	bottom = boxes[bottomIndex]
+	maxHeight = 0 
+
+	for i in range(bottomIndex + 1, len(boxes)): 
+		if boxes[i].canBeAbove(bottom):   # Assume the canBeAbove function has been defined already
+			height = createStack(boxes, i)
+			maxHeight = max(maxHeight, height) 
+	
+	maxHeight += bottom.height
+	results[bottomIndex] = maxHeight
+
+	return maxHeight
+
+def compare(box1, box2): 
+	return box1.height - box2.height
+
+"""Alternative Scenario"""
+
+def createStackAlt(boxes): 
+	boxes = sorted(boxes, cmp=compare(), reverse=True)   # List by descending order; highest height first
+	stackMap = [0]*len(boxes)   # This assumes object by reference
+	
+	return createStackAlt(boxes, None, 0, stackMap) 
+
+
+def createStackAlt(boxes, bottom, offset, results):
+
+	# Base case
+	if (offset > len(boxes)): 
+		return 0
+
+	# Calculate the height with the (new) bottom box
+	newBottom = boxes[offset] 
+	heightBottom = 0 
+
+	if (bottom == None) or newBottom.canBeAbove(bottom): # Assume canBeAbove is already defined
+		if (results[offset] == 0): 
+			results[offset] = createStackAlt(boxes, newBottom, offset + 1, results)
+			results[offset] += newBottom.height
+	
+	heightBottom = results[offset]
+
+	# Calculate height without the bottom box
+	heightNoBottom = createStackAlt(boxes, bottom, offset + 1, results) 
+
+	return max(heightBottom, heightNoBottom)
+
+# 8.14 - Boolean Evaluation
+# Given a boolean expression consisting of symbols 0 (false), 1 (true), & (AND), | (OR), and ^ (XOR), and a desired boolean result value "result"...
+# Implement a function to count the number of ways of parenthesizing the expression such that it evaluates to result. 
+# The expression should be fully parenthensized (e.g. (0) ^ (1) ) but not extraneously (e.g. (((0))^(1)) )
+
+# EXAMPLES: 
+# countEval("1^0|0\1", False) --> 2
+# countEval("0&0&0&161|0", True) --> 10 
+
+def countEval(string, result, memory = {}): 
+	if len(string) == 0: return 0 
+	if len(string) == 1: return 1 if stringToBool(string) == result else 0 
+
+	# If the result based on a result and string combo was already calculated, return that result 
+	if (result + string) in memory:
+		return memory.get(result + string)
+
+	ways = 0 
+	for i in range(0, len(string), 2): 
+		character = string[i] 
+		left = string[0:i]
+		right = string[i+1:len(string)]
+
+		#Evaluate each side for each result
+		leftTrue = countEval(left, True)
+		leftFalse = countEval(left, False)
+		rightTrue = countEval(right, True)
+		rightFalse = countEval(right, False)
+		total = (leftTrue + rightTrue) + (leftFalse + rightFalse)
+
+		totalTrue = 0
+		if (character == '^'):   
+			#Check with XOR
+			totalTrue = (leftTrue * rightFalse) + (leftFalse * rightTrue)
+		elif (character == "&"): 
+			#Check with AND
+			totalTrue = leftTrue * rightTrue 
+		elif (character == "|"): 
+			#Check with OR
+			totalTrue = (leftTrue * rightTrue) + (leftFalse * rightTrue) + (leftTrue * rightFalse) 
+
+		subWays = totalTrue if result else total - totalTrue 
+		ways += subWays
+
+	# Store the result in memory for later use	
+	memory[result+string] = ways
+	return ways 
+
+def stringToBool(string): 
+	return True if (string == "1") else False
