@@ -208,6 +208,9 @@ Using the file system, merge the files - one by one. Use the larger file as a re
 
 # This solution assumes the numbers are all integers, and some integers may repeat. 
 
+def findOpenNumber(): 
+    pass
+    # Ignore this question due to insufficient code coverage in Python to complete this question at the moment.
 
 # 10.8 - Find Duplicates
 # You have an array with all the numbers from 1 to N, where N is at most 32,000. 
