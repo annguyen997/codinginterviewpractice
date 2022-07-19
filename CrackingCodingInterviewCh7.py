@@ -7,7 +7,7 @@ Gayle Laakmann McDowell
 
 '''Chapter 7 - Object-Oriented Design'''
 
-from abc import abstractmethod
+from abc import abstractmethod, abstractproperty
 import enum
 from os import system
 from this import d
@@ -332,6 +332,301 @@ class JukePlayer:
 # 7.4 - Parking Lot
 # Design a parking lot using object-oriented principles. 
 
+# Assumptions: 
+# 1) Parking lot has multiple levels.
+# 2) Parking lot can park only motorcycles, cars, and buses
+# 3) Parking lot has parking slots for motorcycles, cars, and buses (thus compact and large spots) 
+# 4) A motorcycle can park at any spot.
+# 5) Cars can park at compact and large spots only. 
+# 6) Buses can park at only large spots. 
+
+class VehicleSize(enum):
+    MOTORCYCLE = 1
+    COMPACT = 2
+    LARGE = 3
+
+class Vehicle:
+    def __init__(self, spotsNeeded = None, size = None):
+        self.parkingSpots = []
+        self.licensePlate = None
+        self.spotsNeeded = spotsNeeded
+        self.size = size
+
+    def getSpotsNeeded(self): 
+        return self.spotsNeeded
+    
+    def getVehicleSize(self):
+        return self.size
+    
+    def parkInSpot(self, parkingSpot): 
+        self.parkingSpots.add(parkingSpot)
+    
+    def clearSpots(self): 
+        pass 
+
+    @abstractmethod
+    def canFitInSpot(self): 
+        pass
+
+class Bus(Vehicle): 
+    def __init__(self, spotsNeeded = 5, size = VehicleSize.LARGE):
+        super(spotsNeeded, size)
+    
+    def canFitInSpot(self, parkingSpot): 
+        if (parkingSpot.size == VehicleSize.LARGE): 
+            return True 
+        return False 
+
+class Car(Vehicle):
+    def __init__(self, spotsNeeded = 1, size = VehicleSize.COMPACT): 
+        super(spotsNeeded, size)
+    
+    def canFitInSpot(self, parkingSpot): 
+        if (parkingSpot.size == VehicleSize.COMPACT): 
+            return True 
+        return False 
+
+class Motorcycle(Vehicle):
+    def __init__(self, spotsNeeded = 1, size = VehicleSize.MOTORCYCLE): 
+        super(spotsNeeded, size)
+    
+    def canFitInSpot(self, parkingSpot): 
+        if (parkingSpot.size == VehicleSize.MOTORCYCLE): 
+            return True 
+        return False 
+
+class ParkingLot: 
+    NUM_LEVELS = 5   # Assumption
+
+    def __init__(self):
+        levels = [] 
+    
+    def parkVehicle(vehicle): 
+        pass 
+
+class Level: 
+
+    SPOTS_PER_ROW = 10  # Assumption
+
+    def __init__(self, level):
+        self.level = level
+        self.spots = [] 
+        self.availableSpots = 0
+
+    def availableSpots(self): 
+        return self.availableSpots
+    
+    def parkVehicle(self, vehicle): 
+        pass 
+
+    def parkVehicleAtSpot(self, vehicle, spot): 
+        pass 
+
+    def findAvailableSpots(self, vehicle): 
+        pass
+
+    def spotFreed(self): 
+        self.availableSpots += 1
+
+class ParkingSpot: 
+    def __init__(self, spotSize, row, spotNumber, level): 
+        self.spotSize = spotSize
+        self.row = row
+        self.spotNumber = spotNumber
+        self.level = level
+        self.vehicle = None
+    
+    def isAvailable(self): 
+        return self.vehicle == None
+    
+    def canFitVehicle(self, vehicle): 
+        pass
+
+    def park(self, vehicle): 
+        pass
+
+    def getRow(self):
+        return self.row
+
+    def getSpotNumber(self):
+        return self.spotNumber
+
+    def removeVehicle(self): 
+        vehicle = self.vehicle
+        self.vehicle = None
+        return vehicle 
+    
+
+# 7.5 - Online Book Reader
+# Design the data structures for an online book reader system. 
+
+# Assumptions: 
+# 1) System has user membership creation/extension; search for books (in database); reading the book; 
+# 2) System Constraints: Only one active user at a time; only one active book at a time. 
+
+class User:
+    def __init__(self, id, details, accountType): 
+        self.userID = id
+        self.details = details
+        self.accountType = accountType
+
+    def renewMembership(self): 
+        pass
 
 
+class Book:
+    def __init__(self, id, details): 
+        self.bookId = id
+        self.details = details
+    
+    def getID(self):
+        return self.bookId
+    
+    def setID(self, id): 
+        self.bookId = id
+    
+    def getDetails(self): 
+        return self.details
+
+    def setDetails(self, details): 
+        self.details = details    
+
+class Library:
+    def __init___(self): 
+        self.books = {}
+    
+    def addBook(self, id, details): 
+        if (self.books.get(id)): 
+            return None 
+        
+        book = Book(id, details)
+        self.books[id] = book
+        return book
+
+    def find(self, id): 
+        return self.books.get(id) 
+    
+    def removeBook(self, id): 
+        if not (self.books[id]): 
+            return False
+
+        book = self.books[id]
+        del self.books[id]
+        return book
+    
+    def removeBook(self, book): 
+        return self.removeBook(book.getID())
+
+class Display:
+    def __init__(self): 
+        self.activeBook = None
+        self.activeUser = None
+        self.__pageNumber = None
+
+    def displayUser(self, user): 
+        self.activeUser = user
+        self.refreshUsername() 
+    
+    def displayBook(self, book): 
+        self.activeBook = book
+        self.__pageNumber = 0
+
+        self.refreshTitle() 
+        self.refreshDetails()
+        self.refreshPage() 
+    
+    def turnPageForward(self): 
+        self.__pageNumber += 1 
+        self.refreshPage()
+    
+    def turnPageBackward(self): 
+        self.__pageNumber -= 1 
+        self.refreshPage()
+
+class UserManager: 
+    def __init__(self): 
+        self.users = {} 
+
+    def addUser(self, id, details, accountType): 
+        if (self.users.get(id)): 
+            return False
+        
+        user = User(id, details, accountType)
+        self.users[id] = user
+        return user
+    
+    def findUser(self, id): 
+        return self.users.get(id) 
+    
+    def removeUser(self, user):
+        return self.removeUser(user.getID())
+    
+    def removeUser(self, id): 
+        if not (self.users.get(id)): 
+            return False
+        
+        user = self.users.get(id)
+        del self.users.get(id)
+        return user
+
+class OnlineReaderSystem:
+    def __init__(self): 
+        self.library = Library()
+        self.userManager = UserManager() 
+        self.display = Display()
+        self.activeBook = None
+        self.activeUser = None
+    
+    def getActiveBook(self): 
+        return self.activeBook
+    
+    def setActiveBook(self, book): 
+        self.activeBook = book
+        self.display.displayBook(book)
+    
+    def setActiveUser(self, user): 
+        self.ActiveUser = user
+        self.display.displayUser(user) 
+    
+# 7.6 - Jigsaw
+# Implement an NxN jigsaw puzzle. 
+# Design the data structures and explain an algorithm to solve the puzzle. 
+# You can assume that you have a fitsWith() method which, when passed two puzzle edges, returns True if the two edges become together. 
+
+# Assumptions
+# 1) Use the absolute position (that is, using row and column). 
+
+class Orientation(enum): 
+    LEFT = 0 
+    TOP = 1
+    RIGHT = 2
+    BOTTOM = 3
+
+    def getOpposite(self, orientation): 
+        if orientation == Orientation.LEFT: 
+            return Orientation.RIGHT
+        elif orientation == Orientation.RIGHT: 
+            return Orientation.LEFT
+        elif orientation == Orientation.TOP: 
+            return Orientation.BOTTOM
+        elif orientation == Orientation.BOTTOM: 
+            return Orientation.TOP 
+        else: 
+            return None
+
+class Shape(enum): 
+    INNER = 0 
+    OUTER = 1
+    FLAT = 2
+
+    def getOpposite(self, orientation): 
+        if orientation == Shape.INNER: 
+            return Shape.OUTER
+        elif orientation == Shape.OUTER: 
+            return Shape.INNER 
+        else: 
+            return None
+
+class Puzzle: 
+    
 
