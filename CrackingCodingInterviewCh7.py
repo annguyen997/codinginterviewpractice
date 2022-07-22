@@ -629,4 +629,72 @@ class Shape(enum):
 
 class Puzzle: 
     
+    def __init__(self, size, pieces, solution): 
+        self.pieces = pieces   # Linked List 
+        self.size = size
+        self.solution = solution 
+
+    # Put piece into solution, turn it appropriately, and remove from list. 
+    def setEdgeInSolution(self, pieces, edge, row, column, orientation): 
+        piece = edge.getParentPiece() 
+        piece.SetEdgeAsOrientation(edge, orientation) 
+        pieces.remove(piece) 
+        self.solution[row][column] = piece 
+    
+    def solve(self): 
+        cornerPieces = LinkedList() 
+        borderPieces = LinkedList() 
+        insidePieces = LinkedList()
+
+        groupPieces(cornerPieces, borderPieces, insidePieces) 
+
+        solution = [0*self.size][0*self.size]
+
+        for row in range(self.size): 
+            for col in range(self.size): 
+                piecesToSearch = getPieceListToSearch(cornerPieces, borderPieces, insidePieces) 
+                if not (fitNextEdge(piecesToSearch, row, col)): 
+                    return False
+        
+        return True 
+    
+    def fitNextEdge(self, piecesToSearch, row, col): 
+        if (row == 0) and (col == 0): 
+            piece = piecesToSearch.remove()
+            orientTopLeftCorner(piece) 
+            self.solution[row][col] = piece
+        else: 
+            pieceToMatch = self.solution[row-1][0] if col == 0 else self.solution[row][col-1]
+            orientationToMatch = Orientation.BOTTOM if col == 0 else Orientation.RIGHT
+            edgeToMatch = pieceToMatch.getEdgeWithOrientation(orientationToMatch) 
+
+            edge = getMatchWithEdge(edgeToMatch, pieceToMatch) 
+
+            if (edge == None): 
+                return False
+
+            orientation = Orientation.getOpposite(orientationToMatch) 
+            self.setEdgeInSolution(piecesToSearch, edge, row, col, orientation) 
+
+
+class Piece: 
+    def __init__(self, edgeList): 
+        self.edges = edgeList  # Orientation : Edge (dictionary) 
+    
+    def rotateEdgesBy(self): 
+        pass
+    
+    def isCorner(self): 
+        pass
+
+    def isBorder(self): 
+        pass
+
+class Edge: 
+    def __init__(self, shape, parentPiece): 
+        self.shape = shape
+        self.parentPiece = parentPiece
+    
+    def fitsEdgeWith(self, edge): 
+        pass 
 
