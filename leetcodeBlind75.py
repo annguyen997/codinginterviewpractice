@@ -162,7 +162,55 @@ class Solution(object):
         right = self.maxDepth(root.right) + 1
         
         return max(left, right) 
+
+# Binary Tree Level Order Traversal 
+# Given the root of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).
+
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution(object):
+    def levelOrder(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[List[int]]
+        """
+        # If the root is None, return [] 
+        if root is None: 
+            return []
+        
+        queue = []
+        output = [] 
+        
+        # Add the root to the queue
+        queue.append(root) 
     
+        # Loop through the queue as long as queue has elements...
+        while len(queue) != 0:
+            level = []
+            
+            for i in range(len(queue)): 
+    
+                # Remove the first element from the queue
+                item = queue.pop(0)
+                level.append(item.val) 
+            
+                if item.left != None:
+                    queue.append(item.left) 
+                if item.right != None: 
+                    queue.append(item.right)
+            
+            output.append(level)
+        
+        return output 
+
+
+
+
 """STRING"""
 # Valid Parentheses
 # Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
