@@ -162,3 +162,41 @@ class Solution(object):
         right = self.maxDepth(root.right) + 1
         
         return max(left, right) 
+    
+"""STRING"""
+# Valid Parentheses
+# Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+# 
+# An input string is valid if:
+# 1. Open brackets must be closed by the same type of brackets.
+# 2. Open brackets must be closed in the correct order.
+
+class Solution(object):
+    def isValid(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        
+        stack = [] 
+        
+        for element in s: 
+            if element in [')', '}', ']']:
+                if (len(stack) == 0): 
+                    return False
+                
+                stackElement = stack.pop()
+
+                if (element == ')' and stackElement != '('): 
+                    return False
+                elif (element == '}' and stackElement != '{'): 
+                    return False
+                elif (element == ']' and stackElement != '['): 
+                    return False
+            else: 
+                stack.append(element) 
+        
+        if (len(stack)): 
+            return False 
+        
+        return True
