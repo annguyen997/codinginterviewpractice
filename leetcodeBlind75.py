@@ -292,6 +292,55 @@ class Solution(object):
             
         return minNum
 
+# Container With Most Water
+#You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).
+# Find two lines that together with the x-axis form a container, such that the container contains the most water.
+# Return the maximum amount of water a container can store.
+# Notice that you may not slant the container.
+
+class Solution(object):
+    def maxArea(self, height):
+        """
+        :type height: List[int]
+        :rtype: int
+        """
+        
+        """
+        BRUTE FORCE
+        
+        maxArea = 0 
+        
+        for left in range(len(height)): 
+            for right in range(left + 1, len(height)): 
+                
+                area = (right - left) * min(height[left], height[right])
+                
+                maxArea = max(maxArea, area)
+        
+        return maxArea 
+        """
+        
+        maxArea = 0 
+        
+        # Use left and right pointers
+        left = 0
+        right = len(height)-1
+        
+        # Loop through the height array
+        while (left < right): 
+            
+            # Calculate the area
+            area = (right - left) * min(height[left], height[right])
+            
+            # Determine which area is largest
+            maxArea = max(maxArea, area) 
+            
+            if (height[left] < height[right]): 
+                left += 1
+            else: 
+                right -= 1
+        
+        return maxArea
 
 """LINKED LISTS"""
 # Reverse a Linked List
@@ -314,13 +363,14 @@ class Solution(object):
         while (current != None):
             next_node = current.next
             current.next = prevNode
+
             prevNode = current
             current = next_node
         
         head = prevNode
         return head
 
-# Linked List Cycle
+# Detect Cycle in a Linked List
 # Given head, the head of a linked list, determine if the linked list has a cycle in it.
 # There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to. Note that pos is not passed as a parameter.
 # Return true if there is a cycle in the linked list. Otherwise, return false.
@@ -349,3 +399,191 @@ class Solution(object):
                 return True
             
         return False
+
+# Merge Two Sorted Lists
+# You are given the heads of two sorted linked lists list1 and list2.
+# Merge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists
+# Return the head of the merged linked list.
+#
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def mergeTwoLists(self, list1, list2):
+        """
+        :type list1: Optional[ListNode]
+        :type list2: Optional[ListNode]
+        :rtype: Optional[ListNode]
+        """
+        
+        new = ListNode()
+        tail = new
+        
+        while list1 and list2: 
+            # If value of current node at list 2 is less than the current node of list 1, add that node to new list
+            if (list2.val < list1.val):
+                tail.next = list2
+                list2 = list2.next
+            else: 
+                tail.next = list1
+                list1 = list1.next
+            
+            tail = tail.next
+        
+        # Add any remaining list1 elements to new list
+        if list1: 
+            tail.next = list1
+        elif list2:
+            tail.next = list2
+  
+        # Node initialized for new is a dummy node, return the next node to retrieve list
+        return new.next
+            
+# Remove Nth Node From End of List
+# Given the head of a linked list, remove the nth node from the end of the list and return its head.
+
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def removeNthFromEnd(self, head, n):
+        """
+        :type head: ListNode
+        :type n: int
+        :rtype: ListNode
+        """
+        
+        dummy = ListNode(0, head)
+        left = dummy
+        right = head
+        
+        # Create the distance between the two nodes equal to n
+        while n > 0 and right:
+            right = right.next
+            n -= 1
+        
+        # Move the pointers, with right moving towards end of the list
+        while right: 
+            left = left.next
+            right = right.next
+        
+        # Remove the node that is at index n from end
+        left.next = left.next.next
+        
+        return dummy.next
+
+# Reorder List
+# You are given the head of a singly linked-list. The list can be represented as:
+# L0 → L1 → … → Ln - 1 → Ln
+# 
+# Reorder the list to be on the following form:
+# L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+# You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def reorderList(self, head):
+        """
+        :type head: ListNode
+        :rtype: None Do not return anything, modify head in-place instead.
+        """
+        
+        # Create the pointers
+        slow = head
+        fast = head.next
+        
+        # Move the pointers towards the end, with fast pointer moving faster
+        # This will locate the middle
+        while (fast) and (fast.next): 
+            slow = slow.next
+            fast = fast.next.next
+        
+        # Reverse the second half
+        second = slow.next      # This marks the first node of second half of the list 
+        slow.next = None        # This marks the middle node's next pointer to be empty
+        prev = None
+        while second: 
+            tmp = second.next
+            second.next = prev 
+            prev = second
+            second = tmp
+        
+        # Merge two halves; reset the pointers to first element of their respective halves 
+        first = head
+        second = prev 
+        
+        while second: 
+            tmp1 = first.next
+            tmp2 = second.next
+            
+            first.next = second
+            second.next = tmp1
+            
+            first = tmp1
+            second = tmp2
+
+# Merge k Sorted Lists
+# You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+# Merge all the linked-lists into one sorted linked-list and return it.
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def mergeKLists(self, lists):
+        """
+        :type lists: List[ListNode]
+        :rtype: ListNode
+        """
+        # Base case
+        if not lists or len(lists) == 0: 
+            return None
+        
+        while len(lists) > 1: 
+            mergedLists = [] 
+            
+            # Merge two linked lists
+            for i in range(0, len(lists), 2): 
+                list1 = lists[i]
+                list2 = lists[i + 1] if ((i + 1) < len(lists)) else None
+                mergedLists.append(self.mergeLists(list1, list2))
+            # Update the merged lists to continue merging larger lists
+            lists = mergedLists
+        
+        # Return the merged list
+        return lists[0]
+    
+    def mergeLists(self, list1, list2):
+        
+        dummy = ListNode() 
+        tail = dummy
+        
+        while list1 and list2: 
+            if (list1.val < list2.val): 
+                tail.next = list1
+                list1 = list1.next
+            else: 
+                tail.next = list2
+                list2 = list2.next
+            
+            tail = tail.next
+        
+        # Add any remaining nodes to the new list
+        if list1: 
+            tail.next = list1
+        if list2: 
+            tail.next = list2
+        
+        # Return the dummy's next node
+        return dummy.next       
+       
+            
+        
