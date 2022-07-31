@@ -438,4 +438,93 @@ class Solution(object):
                 newString += c.lower() 
         
         return newString == newString[::-1]
-    
+
+# Longest Substring Without Repeating Characters
+# Given a string s, find the length of the longest substring without repeating characters.
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        
+        maxLength = 0
+        left = 0
+        charSet = set()
+        
+        for right in range(len(s)): 
+            # If element is in character set, remove the element from set and shift left pointer
+            while s[right] in charSet: 
+                charSet.remove(s[left])
+                left += 1
+            
+            # Add the character to the set
+            charSet.add(s[right])
+            
+            maxLength = max(maxLength, right - left + 1)
+                
+        return maxLength
+
+# Valid Anagram
+# Given two strings s and t, return true if t is an anagram of s, and false otherwise.
+# An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+
+class Solution(object):
+    def isAnagram(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: bool
+        """
+        # If lengths are not equal, by definition they are not anagrams
+        if len(s) != len(t): 
+            return False
+        
+        charStr = {} 
+        
+        for ch in s:
+            if ch not in charStr:
+                charStr[ch] = 0
+            
+            charStr[ch] = 1 + charStr[ch]
+        
+        for ch in t: 
+            if ch not in charStr: 
+                return False
+            
+            charStr[ch] = charStr[ch] - 1
+            
+            if charStr[ch] == 0: 
+                del charStr[ch]
+        
+        if charStr: 
+            return False
+        
+        return True
+ 
+ # Group Anagrams
+ # Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+ # An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+ class Solution(object):
+    def groupAnagrams(self, strs):
+        """
+        :type strs: List[str]
+        :rtype: List[List[str]]
+        """
+        # Base case
+        if not strs: 
+            return None
+        
+        listAnagrams = defaultdict(list)  # Mapping charCount to list of anagrams
+        
+        for string in strs:
+            count = [0] * 26 # a - z
+            
+            for c in string: 
+                count[ord(c) - ord("a")] += 1
+            
+            # Add the count as a key, append the string
+            listAnagrams[tuple(count)].append(string)
+            
+        return listAnagrams.values()
+        

@@ -584,6 +584,3 @@ class Solution(object):
         
         # Return the dummy's next node
         return dummy.next       
-       
-            
-        
