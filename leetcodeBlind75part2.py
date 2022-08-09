@@ -559,3 +559,94 @@ class Solution(object):
         
         # Return the result (maximum length) of the replacements
         return result
+
+# Longest Palindromic Substring
+# Given a string s, return the longest palindromic substring in s.
+class Solution(object):
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        
+        #Base cases
+        if not s: 
+            return ""
+        
+        if len(s) == 1: 
+            return s
+        
+        result = ""
+        resLen = 0 
+        
+        for i in range(len(s)):  # Indexes 
+            
+            # For odd length palindromes
+            left = i
+            right = i
+            
+            # While pointers are in bounds, start one character then go outward in both characters
+            while (left >= 0) and (right < len(s)) and s[left] == s[right]:
+                if (right - left + 1) > resLen: 
+                    result = s[left:right+1]
+                    resLen = right - left + 1
+                
+                left -= 1
+                right += 1
+            
+            # For even length palindromes
+            left = i 
+            right = i + 1
+            while (left >= 0) and (right < len(s)) and s[left] == s[right]: 
+                if (right - left + 1) > resLen:
+                    result = s[left:right+1]
+                    resLen = right - left + 1
+                
+                left -= 1
+                right += 1
+            
+        
+        return result
+
+# Palindromic Substrings
+# Given a string s, return the number of palindromic substrings in it.
+# A string is a palindrome when it reads the same backward as forward.
+# A substring is a contiguous sequence of characters within the string.
+class Solution(object):
+    def countSubstrings(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        
+        if not s: 
+            return 0 
+        
+        if len(s) == 1: 
+            return 1
+        
+        result = 0
+        
+        for i in range(len(s)): 
+            
+            # Odd-length palindromes
+            left = i 
+            right = i 
+            
+            while (left >= 0) and (right < len(s)) and s[left] == s[right]:
+                result += 1
+                left -= 1
+                right += 1
+                
+            
+            # Even-length palindromes
+            left = i 
+            right = i+1 
+            
+            while (left >= 0) and (right < len(s)) and s[left] == s[right]:
+                result += 1
+                left -= 1
+                right += 1
+            
+
+        return result 

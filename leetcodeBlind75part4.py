@@ -150,8 +150,54 @@ class Solution(object):
             left += 1
             right -= 1
                  
-                        
-                        
-                        
-                        
-            
+# Set Matrix Zeroes
+# Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0's.
+# You must do it in place.                      
+# 
+# EXAMPLE
+# Input: matrix = [[1,1,1],[1,0,1],[1,1,1]]
+# Output: [[1,0,1],[0,0,0],[1,0,1]]
+class Solution(object):
+    def setZeroes(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: None Do not return anything, modify matrix in-place instead.
+        """
+        # O(1) solution 
+        ROWS = len(matrix)
+        COLS = len(matrix[0])
+        rowZero = False
+
+        # Determine which rows/cols need to be zero
+        for r in range(ROWS): 
+            for c in range(COLS): 
+
+                # Set the first row and of that column zero if zero is found at matrix(r,c)
+                if matrix[r][c] == 0: 
+                    matrix[0][c] = 0
+
+                    # Also set the first column of a given row zero only if it is not the first row
+                    if r > 0: 
+                        matrix[r][0] = 0
+                    else: 
+                        rowZero = True
+
+        # Do the zeroing, skipping the first row and col
+        for r in range(1, ROWS): 
+            for c in range(1, COLS): 
+                
+                # If the first row or column is marked zero, zero that position too
+                if matrix[0][r] == 0 or matrix[r][0] == 0: 
+                    matrix[r][c] = 0
+
+        # If the upperleft corner is zero, zero each row of first column
+        if matrix[0][0] == 0: 
+            for r in range(ROWS): 
+                matrix[r][0] = 0 
+
+        # If a column in the first row is zero, zero the columns of the first row
+        if rowZero: 
+            for c in range(COLS): 
+                matrix[0][c] = 0
+
+        return matrix
