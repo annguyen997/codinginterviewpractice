@@ -32,3 +32,11 @@ def printPairs(array):
             print(array[i] + "," + array[j])
     
     '''This function requires O(N^2) time'''
+
+# Example 3
+def printedUnordedPairsEx3(array): 
+    for i in range(0, len(array), 1): # O(N) called N times --> N * N
+        for j in range(i + 1, len(array), 1):   # O(N - 1) 
+            print(array[i] + "," + array[j])
+    
+    '''This function requires O(N^2) time'''
