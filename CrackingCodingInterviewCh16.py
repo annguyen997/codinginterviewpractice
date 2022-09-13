@@ -7,6 +7,52 @@ Gayle Laakmann McDowell
 
 '''Chapter 16 - Moderate'''
 
+# 16.1 - Number Swapper
+# Write a function to swap a number in place (that is, without temporary variables)
+def swapNumber(): 
+    pass
+
+# 16.2 - Word Frequencies
+# Design a method to find the frequency of occurrences of any given word in a book. What if we were running this algorithm multiple times? 
+
+# Single query version - O(N)
+def getFrequency(book, word): 
+    word = word.strip().lower()
+    count = 0 
+
+    for w in book:
+        if w == word:
+            count += 1
+    
+    return count
+
+# Repetitive query version - O(1) 
+def setDictionary(book): 
+    table = {}
+    for word in book:
+        word = word.lower() 
+        
+        if word.strip() == "": 
+            continue 
+
+        if word.strip() in table: 
+            table[word] = table.get(word) + 1
+        else: 
+            table[word] = 1
+    
+    return table
+
+def getFrequency(table, word):
+    if (table == None) or (word == None): 
+        return -1
+    
+    word = word.strip().lower()
+    
+    if word in table: 
+        return table.get(word) 
+    
+    return 0
+
 # 16.17 - Contiguous Sequences
 # You are given an array of integers (both positive and negative). 
 # Find the contiguous sequence with the largest sum. Return the sum. 
